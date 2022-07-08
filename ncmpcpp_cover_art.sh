@@ -1,20 +1,20 @@
-#!/bin/sh
+#!/bin/bash
 # Cover art script for ncmpcpp-ueberzug
 
 # SETTINGS
-music_library="$HOME/music"
-fallback_image="$HOME/.ncmpcpp/ncmpcpp-ueberzug/img/fallback.png"
-padding_top=3
+music_library="$HOME/Music"
+fallback_image="$HOME/.config/ncmpcpp/ncmpcpp-ueberzug/img/fallback.png"
+padding_top=5
 padding_bottom=1
 padding_right=1
-max_width=0
-reserved_playlist_cols=30
+max_width=25
+reserved_playlist_cols=80
 reserved_cols_in_percent="false"
-force_square="false"
+force_square="true"
 square_alignment="top"
 
-left_aligned="false"
-padding_left=
+left_aligned="true"
+padding_left=0
 
 # Only set this if the geometries are wrong or ncmpcpp shouts at you to do it.
 # Visually select/highlight a character on your terminal, zoom in an image 
@@ -187,34 +187,12 @@ guess_font_size() {
     font_width=$(( (term_width - 2 * term_xpadding) / term_cols ))
     font_height=$(( (term_height - 2 * term_ypadding) / term_lines ))
 }
-
 guess_terminal_pixelsize() {
-    # We are re-using the same Python snippet that
-    # Ueberzug utilizes to retrieve terminal window size.
-    # https://github.com/seebye/ueberzug/blob/master/ueberzug/terminal.py#L10
 
-    python <<END
-import sys, struct, fcntl, termios
-
-def get_geometry():
-    fd_pty = sys.stdout.fileno()
-    farg = struct.pack("HHHH", 0, 0, 0, 0)
-    fretint = fcntl.ioctl(fd_pty, termios.TIOCGWINSZ, farg)
-    rows, cols, xpixels, ypixels = struct.unpack("HHHH", fretint)
-    return "{} {}".format(xpixels, ypixels)
-
-output = get_geometry()
-f = open("/tmp/ncmpcpp_geometry.txt", "w")
-f.write(output)
-f.close()
-END
-
-    # ioctl doesn't work inside $() for some reason so we
-    # must use a temporary file
-    term_width=$(awk '{print $1}' /tmp/ncmpcpp_geometry.txt)
-    term_height=$(awk '{print $2}' /tmp/ncmpcpp_geometry.txt)
-    rm "/tmp/ncmpcpp_geometry.txt"
-
+    gwidth=$(printf "$(xwininfo -id $WINDOWID)" | grep Width)
+    term_width=$(echo $gwidth | awk '{print $2}')
+    gheight=$(printf "$(xwininfo -id $WINDOWID)" | grep Height)
+    term_height=$(echo $gheight | awk '{print $2}')
     if ! is_font_size_successfully_computed; then
         echo "Failed to guess font size, try setting it in ncmpcpp_cover_art.sh settings"
     fi
