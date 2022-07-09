@@ -19,7 +19,7 @@ Check out [sacad](https://github.com/desbma/sacad) if you want to automatically 
 * `kitty` (might use wrong terminal if using `--single-instance` flag)
 
 #### Require manually setting character size in `ncmpcpp_cover_art.sh`:
-* `cool-retro-term` 
+* `cool-retro-term`
 * `sakura` (resizing can break geometry)
 * `gnome-terminal`, `terminator`, `xfce4-terminal`  (Album art displays on the last opened terminal irrespective of which is the ncmpcpp window, resizing can break geometry)
 
