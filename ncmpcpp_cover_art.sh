@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Cover art script for ncmpcpp-ueberzug
 
 # SETTINGS
