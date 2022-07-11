@@ -24,9 +24,9 @@ font_width=
 
 main() {
     kill_previous_instances >/dev/null 2>&1
-    find_cover_image        >/dev/null 2>&1
-    display_cover_image     2>/dev/null
-    detect_window_resizes   >/dev/null 2>&1
+    find_cover_image >/dev/null 2>&1
+    display_cover_image 2>/dev/null
+    detect_window_resizes >/dev/null 2>&1
 }
 
 # ==== Main functions =========================================================
@@ -61,7 +61,7 @@ find_cover_image() {
     album_dir="${file%/*}"
     album_dir="$music_library/$album_dir"
     found_covers="$(find "$album_dir" -type d -exec find {} -maxdepth 1 -type f \
-    -iregex ".*/.*\(${album}\|cover\|folder\|artwork\|front\).*[.]\\(jpe?g\|png\|gif\|bmp\)" \; )"
+        -iregex ".*/.*\(${album}\|cover\|folder\|artwork\|front\).*[.]\\(jpe?g\|png\|gif\|bmp\)" \;)"
     cover_path="$(echo "$found_covers" | head -n1)"
     if [ -n "$cover_path" ]; then
         return
@@ -96,7 +96,6 @@ detect_window_resizes() {
     } &
 }
 
-
 # ==== Helper functions =========================================================
 
 compute_geometry() {
@@ -107,12 +106,12 @@ compute_geometry() {
         guess_font_size
     fi
 
-    ueber_height=$(( term_lines - padding_top - padding_bottom ))
+    ueber_height=$((term_lines - padding_top - padding_bottom))
     # Because Ueberzug uses characters as a unit we must multiply
     # the line count (height) by the font size ratio in order to
     # obtain an equivalent width in column count
-    ueber_width=$(( ueber_height * font_height / font_width ))
-    ueber_left=$(( term_cols - ueber_width - padding_right ))
+    ueber_width=$((ueber_height * font_height / font_width))
+    ueber_left=$((term_cols - ueber_width - padding_right))
 
     if [ "$left_aligned" = "true" ]; then
         compute_geometry_left_aligned
@@ -125,44 +124,44 @@ compute_geometry() {
 
 compute_geometry_left_aligned() {
     ueber_left=$padding_left
-    max_width_chars=$(( term_cols * max_width / 100 ))
+    max_width_chars=$((term_cols * max_width / 100))
     if [ "$max_width" != 0 ] &&
-        [ $(( ueber_width + padding_right + padding_left )) -gt "$max_width_chars" ]; then
-        ueber_width=$(( max_width_chars - padding_left - padding_right ))
+        [ $((ueber_width + padding_right + padding_left)) -gt "$max_width_chars" ]; then
+        ueber_width=$((max_width_chars - padding_left - padding_right))
     fi
 }
 
 compute_geometry_right_aligned() {
     if [ "$reserved_cols_in_percent" = "true" ]; then
-        ueber_left_percent=$(printf "%.0f\n" $(calc "$ueber_left" / "$term_cols" '*' 100))
+        ueber_left_percent=$(printf "%.0f\n" "$(calc "$ueber_left" / "$term_cols" '*' 100)")
         if [ "$ueber_left_percent" -lt "$reserved_playlist_cols" ]; then
-            ueber_left=$(( term_cols * reserved_playlist_cols / 100  ))
-            ueber_width=$(( term_cols - ueber_left - padding_right ))
+            ueber_left=$((term_cols * reserved_playlist_cols / 100))
+            ueber_width=$((term_cols - ueber_left - padding_right))
         fi
     else
         if [ "$ueber_left" -lt "$reserved_playlist_cols" ]; then
             ueber_left=$reserved_playlist_cols
-            ueber_width=$(( term_cols - ueber_left - padding_right ))
+            ueber_width=$((term_cols - ueber_left - padding_right))
         fi
 
     fi
 
     if [ "$max_width" != 0 ] && [ "$ueber_width" -gt "$max_width" ]; then
         ueber_width=$max_width
-        ueber_left=$(( term_cols - ueber_width - padding_right ))
+        ueber_left=$((term_cols - ueber_width - padding_right))
     fi
 }
 
 apply_force_square_setting() {
     if [ $force_square = "true" ]; then
-        ueber_height=$(( ueber_width * font_width / font_height ))
+        ueber_height=$((ueber_width * font_width / font_height))
         case "$square_alignment" in
             center)
-                area=$(( term_lines - padding_top - padding_bottom ))
-                padding_top=$(( padding_top + area / 2 - ueber_height / 2  ))
+                area=$((term_lines - padding_top - padding_bottom))
+                padding_top=$((padding_top + area / 2 - ueber_height / 2))
                 ;;
             bottom)
-                padding_top=$(( term_lines - padding_bottom - ueber_height ))
+                padding_top=$((term_lines - padding_bottom - ueber_height))
                 ;;
             *) ;;
         esac
@@ -178,21 +177,21 @@ guess_font_size() {
 
     guess_terminal_pixelsize
 
-    approx_font_width=$(( term_width / term_cols ))
-    approx_font_height=$(( term_height / term_lines ))
+    approx_font_width=$((term_width / term_cols))
+    approx_font_height=$((term_height / term_lines))
 
-    term_xpadding=$(( ( - approx_font_width * term_cols + term_width ) / 2 ))
-    term_ypadding=$(( ( - approx_font_height * term_lines + term_height ) / 2 ))
+    term_xpadding=$(((-approx_font_width * term_cols + term_width) / 2))
+    term_ypadding=$(((-approx_font_height * term_lines + term_height) / 2))
 
-    font_width=$(( (term_width - 2 * term_xpadding) / term_cols ))
-    font_height=$(( (term_height - 2 * term_ypadding) / term_lines ))
+    font_width=$(((term_width - 2 * term_xpadding) / term_cols))
+    font_height=$(((term_height - 2 * term_ypadding) / term_lines))
 }
 guess_terminal_pixelsize() {
 
-    gwidth=$(printf "$(xwininfo -id $WINDOWID)" | grep Width)
-    term_width=$(echo $gwidth | awk '{print $2}')
-    gheight=$(printf "$(xwininfo -id $WINDOWID)" | grep Height)
-    term_height=$(echo $gheight | awk '{print $2}')
+    gwidth=$(printf '%s' "$(xwininfo -id "$WINDOWID")" | grep Width)
+    term_width=$(echo "$gwidth" | awk '{print $2}')
+    gheight=$(printf '%s' "$(xwininfo -id "$WINDOWID")" | grep Height)
+    term_height=$(echo "$gheight" | awk '{print $2}')
     if ! is_font_size_successfully_computed; then
         echo "Failed to guess font size, try setting it in ncmpcpp_cover_art.sh settings"
     fi
@@ -202,7 +201,6 @@ is_font_size_successfully_computed() {
     [ -n "$term_height" ] && [ -n "$term_width" ] &&
         [ "$term_height" != "0" ] && [ "$term_width" != "0" ]
 }
-
 
 calc() {
     awk "BEGIN{print $*}"
@@ -215,10 +213,9 @@ send_to_ueberzug() {
     # keys and values so we separate words with tabs
     # and send the result to the wrapper's FIFO
     IFS="$(printf "\t")"
-    echo "$*" > "$FIFO_UEBERZUG"
+    echo "$*" >"$FIFO_UEBERZUG"
 
     IFS=${old_IFS}
 }
-
 
 main
