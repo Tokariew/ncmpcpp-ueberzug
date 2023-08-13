@@ -77,16 +77,16 @@ display_cover_image() {
     compute_geometry
 
     send_to_ueberzug \
-        action "add" \
-        identifier "mpd_cover" \
-        path "$cover_path" \
-        x "$ueber_left" \
-        y "$padding_top" \
-        height "$ueber_height" \
-        width "$ueber_width" \
-        synchronously_draw "True" \
-        scaler "forced_cover" \
-        scaling_position_x "0.5"
+        '{"action": "add",' \
+        '"identifier": "mpd_cover",' \
+        "\"path\": \"$cover_path\"," \
+        "\"x\": \"$ueber_left\"," \
+        "\"y\": \"$padding_top\"," \
+        "\"height\": \"$ueber_height\"," \
+        "\"width\": \"$ueber_width\"," \
+        '"synchronously_draw": "True",' \
+        '"scaler": "forced_cover",' \
+        '"scaling_position_x": 0.5}'
 }
 
 detect_window_resizes() {
@@ -212,7 +212,7 @@ send_to_ueberzug() {
     # Ueberzug's "simple parser" uses tab-separated
     # keys and values so we separate words with tabs
     # and send the result to the wrapper's FIFO
-    IFS="$(printf "\t")"
+    IFS="$(printf " ")"
     echo "$*" >"$FIFO_UEBERZUG"
 
     IFS=${old_IFS}
